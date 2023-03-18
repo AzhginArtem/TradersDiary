@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/TradersDiary/static/css/main.4ecbe5cf.css",
-    "main.js": "/TradersDiary/static/js/main.eeab85b2.js",
+    "main.js": "/TradersDiary/static/js/main.1237c75c.js",
     "index.html": "/TradersDiary/index.html",
     "main.4ecbe5cf.css.map": "/TradersDiary/static/css/main.4ecbe5cf.css.map",
-    "main.eeab85b2.js.map": "/TradersDiary/static/js/main.eeab85b2.js.map"
+    "main.1237c75c.js.map": "/TradersDiary/static/js/main.1237c75c.js.map"
   },
   "entrypoints": [
     "static/css/main.4ecbe5cf.css",
-    "static/js/main.eeab85b2.js"
+    "static/js/main.1237c75c.js"
   ]
 }
