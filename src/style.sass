@@ -1,0 +1,89 @@
+*,
+*:after,
+*:before
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+
+body
+  height: 100vh
+
+.main
+  height: calc(100vh - 45px - 60px)
+  padding: 30px
+  padding-bottom: 0
+
+.auth
+  list-style: none
+  &__form
+    background: #153E90
+    border-bottom: 2px solid #0010A4
+    border-radius: 5px
+    display: flex
+    align-items: center
+    flex-direction: column
+    padding: 15px 23px
+    margin-bottom: 20px
+  &__block
+    width: 100%
+    margin-bottom: 15px
+    &:last-of-type
+      margin-bottom: 0
+  &__label
+    font-family: 'Nunito'
+    font-style: normal
+    font-weight: 400
+    font-size: 16px
+    line-height: 22px
+    color: #FFFFFF
+    margin-bottom: 5px
+  &__input
+    width: 100%
+    background: #FFFFFF
+    border-bottom: 1px solid #000000
+    border-radius: 5px
+    border: none
+    height: 20px
+    padding: 0 10px
+  &__btn
+    width: 250px
+    height: 30px
+    background: #0E49B5
+    display: block
+    border: none
+    border-bottom: #0010A4 3px solid
+    display: flex
+    justify-content: center
+    align-items: center
+    margin: 0 auto 12px auto
+    border-radius: 5px
+    font-family: 'Nunito'
+    font-weight: 600
+    font-size: 16px
+    transition: .2s
+    line-height: 22px
+    text-decoration: none
+    color: #FFFFFF
+    &:hover
+      transform: scale(1.1)
+  &__switch
+    font-family: 'Nunito'
+    font-style: normal
+    font-weight: 400
+    font-size: 12px
+    line-height: 16px
+    color: #0E49B5
+    margin: 0 auto
+    display: block
+    text-align: center
+    margin-bottom: 8px
+    text-decoration: none
+    width: 40%
+    &:hover
+      color: #153E90
+      cursor: pointer
+  &__socials
+    text-align: center
+    margin-bottom: 8px
+  &__error
+    text-align: center
