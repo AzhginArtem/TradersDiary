@@ -1,14 +1,27 @@
 .navbar
   width: 100%
   height: 60px
-  background: #4659FF
+  background: #153E90
+  @media (min-width: 1400px)
+    height: 100px
+    &__item
+      height: 100% !important
+    &__link
+      justify-content: space-evenly !important
+    &__icon
+      transform: scale(2)
+    &__txt
+      font-size: 20px !important
+    &__menu
+      padding: 0 100px !important
   &__nav
     height: 100%
   &__menu
     width: 100%
     height: 100%
     display: flex
-    justify-content: space-evenly
+    justify-content: space-between
+    padding: 0 25px
     align-items: center
     list-style: none
   &__item

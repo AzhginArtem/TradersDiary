@@ -1,45 +1,53 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import './NavBar.sass';
+import HomeImage from '../../icons/Home.svg';
+import BalanceImage from '../../icons/Balance.svg';
+import ProfileImage from '../../icons/Profile.svg';
+import MoreImage from '../../icons/More.svg';
+import { Context } from '../../index';
 
-const NavBar = () => {
+const NavBar = observer(() => {
+  const { user } = useContext(Context);
   return (
-    <div className="navbar">
-      <nav className="navbar__nav">
-        <ul className="navbar__menu">
-          <li className="navbar__item">
-            <Link className="navbar__link">
-              <img src="/assets/icons/Home.svg" alt="" className="navbar__icon" />
-              <span className="navbar__txt">Сделки</span>
-            </Link>
-          </li>
-          <li className="navbar__item">
-            <Link className="navbar__link">
-              <img src="/assets/icons/Balance.svg" alt="" className="navbar__icon" />
-              <span className="navbar__txt">Баланс</span>
-            </Link>
-          </li>
-          <li className="navbar__item">
-            <Link className="navbar__link">
-              <img src="/assets/icons/Profile.svg" alt="" className="navbar__icon" />
-              <span className="navbar__txt">Я</span>
-            </Link>
-          </li>
-          <li className="navbar__item" style={{ height: '60%' }}>
-            <Link className="navbar__link">
-              <img
-                src="/assets/icons/More.svg"
-                alt=""
-                className="navbar__icon"
-                style={{ paddingTop: 6 }}
-              />
-              <span className="navbar__txt">More</span>
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <>
+      {user.isAuth ? (
+        <div className="navbar">
+          <nav className="navbar__nav">
+            <ul className="navbar__menu">
+              <li className="navbar__item">
+                <Link to="/main" className="navbar__link">
+                  <img src={HomeImage} alt="" className="navbar__icon" />
+                  <span className="navbar__txt">Сделки</span>
+                </Link>
+              </li>
+              <li className="navbar__item">
+                <Link className="navbar__link">
+                  <img src={BalanceImage} alt="" className="navbar__icon" />
+                  <span className="navbar__txt">Баланс</span>
+                </Link>
+              </li>
+              <li className="navbar__item">
+                <Link to={'/profile/:' + user.user.login} className="navbar__link">
+                  <img src={ProfileImage} alt="" className="navbar__icon" />
+                  <span className="navbar__txt">Я</span>
+                </Link>
+              </li>
+              <li className="navbar__item" style={{ height: '60%' }}>
+                <Link to={'/deposit'} className="navbar__link">
+                  <img src={MoreImage} alt="" className="navbar__icon" style={{ paddingTop: 6 }} />
+                  <span className="navbar__txt">More</span>
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
-};
+});
 
 export default NavBar;

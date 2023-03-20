@@ -4,7 +4,7 @@ import { accounts } from '../store/ArtificialAccounts';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '..';
 
-const Auth = () => {
+const Auth = (props) => {
   const { user } = useContext(Context);
   const [login, setLogin] = useState('');
   const [FIO, setFIO] = useState('');
@@ -17,19 +17,21 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
+    user.setIsAuth(true);
+    user.setUser(accounts[0]);
     if (isFormValide) {
-      user.setIsAuth(true);
       navigate('/main');
     }
   }, [isFormValide]);
 
   const handleAuth = (e) => {
-    e.preventDefault();
     if (isLogin) {
       if (
-        login === accounts[0].Login ||
-        (login === accounts[0].FIO && password === accounts[0].password)
+        (login == accounts[0].Login || login == accounts[0].FIO) &&
+        password == accounts[0].Password
       ) {
+        user.setUser(accounts[0]);
         user.setIsAuth(true);
         navigate('/main');
       }
@@ -40,6 +42,8 @@ const Auth = () => {
         return 0;
       } else if (!handleValidate()) {
         return 0;
+      } else {
+        accounts[0] = { login: login, FIO: FIO, email: email, phone: phone, password: password };
       }
     }
   };

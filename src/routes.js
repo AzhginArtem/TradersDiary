@@ -4,6 +4,7 @@ import Main from './pages/Main';
 import NewOrder from './pages/NewOrder';
 import Order from './pages/Order';
 import Profile from './pages/Profile';
+import ProfileChange from './pages/ProfileChange';
 import {
   DEPOSIT_ROUTE,
   MAIN_ROUTE,
@@ -33,6 +34,10 @@ export const AuthRoutes = [
   {
     path: PROFILE_ROUTE + '/:id',
     Component: Profile,
+  },
+  {
+    path: PROFILE_ROUTE + '/:id' + '/edit',
+    Component: ProfileChange,
   },
 ];
 
