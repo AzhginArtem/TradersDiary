@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/TradersDiary/static/css/main.b95a1296.css",
-    "main.js": "/TradersDiary/static/js/main.c2a1ddba.js",
+    "main.css": "/TradersDiary/static/css/main.e2ea547a.css",
+    "main.js": "/TradersDiary/static/js/main.43622b16.js",
     "static/media/Home.svg": "/TradersDiary/static/media/Home.d46a5f5102d8c2b06f7c6eb8a5efb1da.svg",
     "static/media/Balance.svg": "/TradersDiary/static/media/Balance.6d40c466f4aad66271c5617c193b8223.svg",
     "static/media/Profile.svg": "/TradersDiary/static/media/Profile.ecb40a3b534f2c6cc236a0b0331769e9.svg",
     "static/media/More.svg": "/TradersDiary/static/media/More.ceedaf8805df707ad13e5ee2f11e1333.svg",
     "index.html": "/TradersDiary/index.html",
     "static/media/ArrowImage.svg": "/TradersDiary/static/media/ArrowImage.cf2be7c3f60e87a3179677144f5f5d8a.svg",
-    "main.b95a1296.css.map": "/TradersDiary/static/css/main.b95a1296.css.map",
-    "main.c2a1ddba.js.map": "/TradersDiary/static/js/main.c2a1ddba.js.map"
+    "main.e2ea547a.css.map": "/TradersDiary/static/css/main.e2ea547a.css.map",
+    "main.43622b16.js.map": "/TradersDiary/static/js/main.43622b16.js.map"
   },
   "entrypoints": [
-    "static/css/main.b95a1296.css",
-    "static/js/main.c2a1ddba.js"
+    "static/css/main.e2ea547a.css",
+    "static/js/main.43622b16.js"
   ]
 }
