@@ -6,8 +6,7 @@ import BinanceImage from '../icons/Binance.png';
 import PoloniexImage from '../icons/Poloniex.png';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
+import { faArrowLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 const StockNames = {
   Binance: BinanceImage,
   Bitmex: BitmexImage,
@@ -98,7 +97,7 @@ const Main = (props) => {
                     onClick={(e) => {
                       document.querySelectorAll('.orders__stats')[i].style.display = isShown
                         ? 'none'
-                        : 'block';
+                        : 'flex';
                       isShown = !isShown;
                       e.target.style.transform = isShown ? 'rotate(180deg)' : 'rotate(0)';
                     }}
@@ -108,17 +107,39 @@ const Main = (props) => {
                 <img src={StockNames[order.Stock]} alt="" className="orders__img" />
               </div>
               <div className="orders__stats">
-                <p className="orders__stat">Сделок: {getCountOfOrders(order.Stock)}</p>
-                <p className="orders__stat">Количество контрактов: {order.Value}</p>
-                <p className="orders__stat">Средняя цена: {order.Summary}</p>
+                <div>
+                  <p className="orders__stat">Сделок: {getCountOfOrders(order.Stock)}</p>
+                  <p className="orders__stat">Количество контрактов: {order.Value}</p>
+                  <p className="orders__stat">Средняя цена: {order.Summary}</p>
+                  <p
+                    href="/TradersDiary/main"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      getOrdersByName(order.Stock);
+                    }}
+                    className="orders__btn">
+                    Посмотреть все сделки
+                  </p>
+                </div>
                 <p
                   href="/TradersDiary/main"
                   onClick={(e) => {
                     e.preventDefault();
                     getOrdersByName(order.Stock);
-                  }}
-                  className="orders__btn">
-                  Посмотреть все сделки
+                  }}>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    color="#fff"
+                    fixedWidth
+                    style={{
+                      width: 40,
+                      height: 40,
+                    }}
+                    onClick={(e) => {
+                      props.setAppBarTitle('Сделки');
+                      setIsChoosed(false);
+                    }}
+                  />
                 </p>
               </div>
             </div>
