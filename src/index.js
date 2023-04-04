@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import OrderStore from './store/OrderStore';
 import UserStore from './store/UserStore';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import './style.sass';
 
 export const Context = createContext(null);
@@ -13,3 +14,5 @@ root.render(
     <App />
   </Context.Provider>,
 );
+
+serviceWorkerRegistration.register();

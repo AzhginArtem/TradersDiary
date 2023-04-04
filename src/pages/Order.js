@@ -6,21 +6,21 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 const OrderTypes = {
-  0: 'Пополнение',
-  1: 'Продажа',
-  2: 'Покупка',
-  3: 'Вывод',
+  1: 'Пополнение',
+  2: 'Продажа',
+  3: 'Покупка',
+  4: 'Вывод',
 };
 
 const OrderNames = {
-  Type: 'Тип сделки',
-  Stock: 'Биржа',
-  Currency1: 'Валюта №1',
-  Currency2: 'Валюта №2',
-  Value: 'Количество контрактов',
-  Price: 'Цена',
-  Summary: 'Сумма сделки',
-  Date: 'Дата',
+  orderType: 'Тип сделки',
+  stock: 'Биржа',
+  currency1: 'Валюта №1',
+  currency2: 'Валюта №2',
+  value: 'Количество контрактов',
+  price: 'Цена',
+  summary: 'Сумма сделки',
+  date: 'Дата',
 };
 
 const Order = (props) => {
@@ -57,13 +57,18 @@ const Order = (props) => {
       </>
       <div className="order">
         {Object.keys(order).map((key, i) => {
-          return key === 'id' || key === 'User' ? (
+          return key === 'id' ||
+            key === 'userId' ||
+            key === 'stockId' ||
+            key === 'currency1Id' ||
+            key === 'currency2Id' ||
+            key === 'orderTypeId' ? (
             ''
           ) : (
             <div key={key}>
               <div className="order__block">
                 <h4 className="order__title">{OrderNames[key]}</h4>
-                <p>{key == 'Type' ? OrderTypes[order[key]] : order[key]}</p>
+                <p>{typeof order[key] === 'object' ? order[key].name : order[key]}</p>
               </div>
               {Object.keys(order).length - 1 !== i ? (
                 <hr style={{ width: '100%', border: 'none', background: '#fff', height: 2 }}></hr>

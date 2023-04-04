@@ -2,7 +2,6 @@
   "name": "traders_diary",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://azhginartem.github.io/TradersDiary",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
@@ -11,7 +10,8 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.3.4",
-    "mobx": "^6.8.0",
+    "jwt-decode": "^3.1.2",
+    "mobx": "^6.9.0",
     "mobx-react": "^7.6.0",
     "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",

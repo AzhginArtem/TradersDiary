@@ -1,104 +1,110 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
-import { accounts } from '../store/ArtificialAccounts';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '..';
+import { registration, login } from '../http/userApi';
+import { ORDERS_ROUTE } from '../utils/consts';
 
-const Auth = (props) => {
+const Auth = observer((props) => {
   const { user } = useContext(Context);
-  const [login, setLogin] = useState('');
+  const [loginInp, setLogin] = useState('');
   const [FIO, setFIO] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
-  const [isFormValide, setIsFormValide] = useState(false);
   const [valideErrors, setValideErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
-    user.setIsAuth(true);
-    user.setUser(accounts[0]);
-    if (isFormValide) {
-      navigate('/main');
-    }
-  }, [isFormValide]);
+  });
 
-  const handleAuth = (e) => {
-    if (isLogin) {
-      if (
-        (login == accounts[0].Login || login == accounts[0].FIO) &&
-        password == accounts[0].Password
-      ) {
-        user.setUser(accounts[0]);
+  const handleAuth = async (e) => {
+    if (handleValidate()) {
+      try {
+        let data;
+        if (isLogin) {
+          data = await login(loginInp, password);
+        } else {
+          data = await registration(FIO, loginInp, password, email, phone);
+        }
+        delete data.exp;
+        delete data.iat;
+        user.setUser(data);
         user.setIsAuth(true);
-        navigate('/main');
+        navigate(ORDERS_ROUTE);
+      } catch (e) {
+        setValideErrors({ error: e.response.data.message });
       }
-      setValideErrors({ error: 'Некорректные данные' });
     } else {
-      if (login === accounts[0].Login || FIO === accounts[0].FIO) {
-        setValideErrors({ error: 'Такой пользователь уже существует' });
-        return 0;
-      } else if (!handleValidate()) {
-        return 0;
-      } else {
-        accounts[0] = { login: login, FIO: FIO, email: email, phone: phone, password: password };
-      }
+      return;
     }
   };
 
   const handleValidate = () => {
-    if (login == false) {
-      setIsFormValide(false);
-      setValideErrors({ login: 'Поле "Логин" должно быть заполнено' });
-      return isFormValide;
-    }
-    if (!login.match(/^[a-zA-Z0-9]+$/)) {
-      setIsFormValide(false);
-      setValideErrors({ login: 'Поле "Логин" не должно содержать не буквенные символы' });
-      return isFormValide;
-    }
-    if (FIO == false) {
-      setIsFormValide(false);
-      setValideErrors({ FIO: 'Поле "ФИО" должно быть заполнено' });
-      return isFormValide;
-    }
-    if (FIO.length < 8) {
-      setIsFormValide(false);
-      setValideErrors({ FIO: 'Поле "ФИО" не может быть меньше 8 символов' });
-      return isFormValide;
-    }
-    if (email == false && phone == false) {
-      setIsFormValide(false);
-      setValideErrors({ email: 'Поле "E-mail" или "Телефон" должно быть заполнено' });
-      return isFormValide;
-    }
-    if (!email.match(/\S+@\S+\.\S+/) && phone == false) {
-      setIsFormValide(false);
-      setValideErrors({ email: 'Поле "E-mail" не валидно' });
-      return isFormValide;
-    }
-    if (!phone.match(/^[\+][\d\(\)\ -]{4,14}\d$/) && email == false) {
-      setIsFormValide(false);
-      setValideErrors({ email: 'Поле "Телефон" не валидно' });
-      return isFormValide;
-    }
-    if (password.length < 8) {
-      setIsFormValide(false);
-      setValideErrors({ password: 'Поле "Пароль" не может быть меньше 8 символов' });
-      return isFormValide;
-    }
-    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=(.*[a-zA-Z]){4}).{8,20}$/)) {
-      setIsFormValide(false);
-      setValideErrors({
-        password: 'Поле "Пароль" должно содержать цифры, большие буквы и символы',
-      });
-      return isFormValide;
+    if (isLogin) {
+      if (loginInp == false) {
+        setValideErrors({ login: 'Поле "Логин" должно быть заполнено' });
+        return false;
+      }
+      if (!loginInp.match(/^[a-zA-Z0-9]+$/)) {
+        setValideErrors({ login: 'Поле "Логин" не должно содержать не буквенные символы' });
+        return false;
+      }
+      if (password.length < 8) {
+        setValideErrors({ password: 'Поле "Пароль" не может быть меньше 8 символов' });
+        return false;
+      }
+      if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=(.*[a-zA-Z]){4}).{8,20}$/)) {
+        setValideErrors({
+          password: 'Поле "Пароль" должно содержать цифры, большие буквы и символы',
+        });
+        return false;
+      }
+    } else {
+      if (loginInp == false) {
+        setValideErrors({ login: 'Поле "Логин" должно быть заполнено' });
+        return false;
+      }
+      if (!loginInp.match(/^[a-zA-Z0-9]+$/)) {
+        setValideErrors({ login: 'Поле "Логин" не должно содержать не буквенные символы' });
+        return false;
+      }
+      if (FIO == false) {
+        setValideErrors({ FIO: 'Поле "ФИО" должно быть заполнено' });
+        return false;
+      }
+      if (FIO.length < 8) {
+        setValideErrors({ FIO: 'Поле "ФИО" не может быть меньше 8 символов' });
+        return false;
+      }
+      if (email == false && phone == false) {
+        setValideErrors({ email: 'Поле "E-mail" или "Телефон" должно быть заполнено' });
+        return false;
+      }
+      if (!email.match(/\S+@\S+\.\S+/) && phone == false) {
+        setValideErrors({ email: 'Поле "E-mail" не валидно' });
+        return false;
+      }
+      if (!phone.match(/^[\+][\d\(\)\ -]{4,14}\d$/) && email == false) {
+        setValideErrors({ email: 'Поле "Телефон" не валидно' });
+        return false;
+      }
+      if (password.length < 8) {
+        setValideErrors({ password: 'Поле "Пароль" не может быть меньше 8 символов' });
+        return false;
+      }
+      if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=(.*[a-zA-Z]){4}).{8,20}$/)) {
+        setValideErrors({
+          password: 'Поле "Пароль" должно содержать цифры, большие буквы и символы',
+        });
+        return false;
+      }
     }
     setValideErrors({});
-    setIsFormValide(true);
-    return isFormValide;
+    return true;
   };
 
   return (
@@ -174,7 +180,12 @@ const Auth = (props) => {
         className="auth__btn">
         {isLogin ? 'Войти!' : 'Зарегистрироваться!'}
       </button>
-      <Link className="auth__switch" onClick={() => setIsLogin(!isLogin)}>
+      <Link
+        className="auth__switch"
+        onClick={() => {
+          setIsLogin(!isLogin);
+          props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
+        }}>
         Уже есть аккаунт!
       </Link>
       <div className="auth__socials">
@@ -183,6 +194,6 @@ const Auth = (props) => {
       <p style={{ color: 'red' }}>{valideErrors.error}</p>
     </div>
   );
-};
+});
 
 export default Auth;

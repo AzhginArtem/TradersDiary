@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Context } from '..';
+import { createOrder, getStocks } from '../http/userApi';
+import { useNavigate } from 'react-router-dom';
+import { ORDERS_ROUTE } from '../utils/consts';
 
 const NewOrder = (props) => {
-  let date = new Date();
-  const [typeInput, setTypeInput] = useState('');
+  const date = new Date();
+  const { user } = useContext(Context);
   const [dateInput, setDateInput] = useState(
     date.getFullYear() +
       '-' +
@@ -16,19 +19,39 @@ const NewOrder = (props) => {
       '-' +
       date.getDate(),
   );
-  const displayWidth = window.innerWidth < 1400 ? 20 : 50;
-
   const [stockInput, setStockInput] = useState('');
   const [firstCurrencyInput, setFirstCurrencyInput] = useState('');
   const [secondCurrencyInput, setSecondCurrencyInput] = useState('');
   const [valueInput, setValueInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
   const [summaryInput, setSummaryInput] = useState('');
+  const [stocks, setStocks] = useState([]);
+  const [typeInput, setTypeInput] = useState('');
+  const displayWidth = window.innerWidth < 1400 ? 20 : 50;
+  const navigate = useNavigate();
 
-  const { orders } = useContext(Context);
+  const handleForm = async (e) => {
+    e.preventDefault();
+    const data = await createOrder(
+      dateInput,
+      firstCurrencyInput,
+      secondCurrencyInput,
+      stockInput,
+      user.user.id,
+      typeInput,
+      valueInput,
+      priceInput,
+      summaryInput,
+    );
+    if (data.code !== 'ERR_NETWORK') navigate(ORDERS_ROUTE);
+  };
 
   const getSummary = () => {
     setSummaryInput(valueInput * priceInput);
+  };
+
+  const getStocksValue = async () => {
+    setStocks(await getStocks());
   };
 
   const hideAllSearches = () => {
@@ -38,11 +61,11 @@ const NewOrder = (props) => {
   };
 
   useEffect(() => {
-    getSummary();
     props.setAppBarTitle('Добавление сделки');
+    getStocksValue();
+    getSummary();
   }, [priceInput, valueInput]);
 
-  const StocksForInput = Array.from(new Set(orders.orders.map((e) => e.Stock)));
   const CurrenciesForInput = ['BTC', 'USDT', 'ETH', 'XMR'];
 
   return (
@@ -112,16 +135,22 @@ const NewOrder = (props) => {
             }}
           />
           <ul className="new__search" id="StockSearchBlock">
-            {StocksForInput.map((stock) => (
-              <li
-                key={stock}
-                onClick={(e) => {
-                  setStockInput(e.target.innerHTML);
-                  document.getElementById('StockSearchBlock').classList.remove('new__search_show');
-                }}>
-                {stock}
-              </li>
-            ))}
+            {stocks.map((stock) =>
+              stock.name.toLowerCase().includes(stockInput.toLowerCase()) ? (
+                <li
+                  key={stock.id}
+                  onClick={(e) => {
+                    setStockInput(e.target.innerHTML);
+                    document
+                      .getElementById('StockSearchBlock')
+                      .classList.remove('new__search_show');
+                  }}>
+                  {stock.name}
+                </li>
+              ) : (
+                <li key={stock.id}></li>
+              ),
+            )}
           </ul>
         </div>
         <div className="new__block">
@@ -221,7 +250,7 @@ const NewOrder = (props) => {
           <input type="text" id="summary" readOnly className="new__input" value={summaryInput} />
         </div>
       </form>
-      <Link to={'/main'} className="auth__btn">
+      <Link onClick={(e) => handleForm(e)} className="auth__btn">
         Сохранить сделку
       </Link>
     </div>

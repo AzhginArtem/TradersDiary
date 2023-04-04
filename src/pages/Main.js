@@ -1,63 +1,83 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '..';
 import ArrowImage from '../icons/ArrowImage.svg';
-import BitmexImage from '../icons/Bitmex.png';
-import BinanceImage from '../icons/Binance.png';
-import PoloniexImage from '../icons/Poloniex.png';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-const StockNames = {
-  Binance: BinanceImage,
-  Bitmex: BitmexImage,
-  Poloniex: PoloniexImage,
-};
+import { observer } from 'mobx-react';
+import { mainOrders } from '../http/userApi';
 
 const OrderTypes = {
-  0: [180, '#DDAC00'],
-  1: [-90, '#FF1414'],
-  2: [90, '#039900'],
+  Пополнение: [180, '#DDAC00'],
+  Покупка: [-90, '#FF1414'],
+  Продажа: [90, '#039900'],
+  'Вывод средств': [90, '#039900'],
 };
 
-const Main = (props) => {
-  const valueFields = ['Value', 'Summary'];
-  const { orders } = useContext(Context);
+const Main = observer((props) => {
+  const valueFields = ['value', 'summary', 'orderTypeId'];
+  const { user, orders } = useContext(Context);
+  const { id } = user.user;
+  const [allOrders, setallOrders] = useState([]);
   const [concreteOrders, setConcreteOrders] = useState([]);
   const [isChoosed, setIsChoosed] = useState(false);
   const displayWidth = window.innerWidth < 1400 ? 20 : 50;
 
   const parseAllOrders = () => {
     return Object.values(
-      orders.orders.reduce((acc, { Stock, ...values }) => {
-        acc[Stock] = acc[Stock] || { Stock };
+      orders.orders.reduce((acc, { stock, stockId, ...values }) => {
+        acc[stockId] = acc[stockId] || { stockId };
         valueFields.forEach((field) => {
-          acc[Stock][field] = (acc[Stock][field] || 0) + values[field];
+          if (field === 'orderTypeId') {
+            acc[stockId][field] = acc[stock] || stock.img;
+          } else acc[stockId][field] = (acc[stockId][field] || 0) + values[field];
         });
         return acc;
       }, {}),
     );
   };
 
-  let parsedOrders = [];
+  const getOrders = async () => {
+    let order = await mainOrders({ id });
+    orders.setOrders(order);
+    setallOrders(parseAllOrders());
+  };
 
   useEffect(() => {
     props.setAppBarTitle('Сделки');
+    getOrders();
   }, []);
 
   const getCountOfOrders = (name) => {
-    return orders.orders.filter((order) => order.Stock === name).length;
+    const arr = orders.orders.map((order) => order.stockId === name);
+    return arr.filter((value) => value).length;
   };
 
   const getOrdersByName = async (name) => {
     props.setAppBarTitle('Сделки на ' + name);
-    await setConcreteOrders(orders.orders.filter((order) => order.Stock === name));
-    await setIsChoosed(concreteOrders != []);
+    setConcreteOrders(
+      orders.orders.filter((order) => {
+        return order.stock.name === name;
+      }),
+    );
+    setIsChoosed(concreteOrders != []);
   };
 
-  const res = parseAllOrders();
-  parsedOrders = res;
+  if (allOrders.length === 0) {
+    return (
+      <div className="orders">
+        <h3 className="orders__empty">У вас еще нет сделок!</h3>
+        <Link to="/neworder" className="orders__btn">
+          Создать
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="orders">
+      <Link to="/neworder" className="orders__adder">
+        +
+      </Link>
       {isChoosed ? (
         <>
           <FontAwesomeIcon
@@ -76,18 +96,50 @@ const Main = (props) => {
               setIsChoosed(false);
             }}
           />
-          <Link to="/neworder" className="orders__adder">
-            +
-          </Link>
+          <div className="orders__concretes">
+            {concreteOrders.map((order, i) => (
+              <Link
+                to={'/order/' + order.id}
+                key={order.id}
+                style={{ width: '100%' }}
+                className="orders__concretes_container">
+                <div className="orders__concrete">
+                  <FontAwesomeIcon
+                    icon={faArrowLeft}
+                    color={OrderTypes[order.orderType.name][1]}
+                    fixedWidth
+                    style={{
+                      width: 20,
+                      height: 20,
+                      transform: 'rotate(' + OrderTypes[order.orderType.name][0] + 'deg)',
+                      marginRight: 15,
+                    }}
+                  />
+                  <div className="orders__txt">
+                    <div className="orders__txt_top">
+                      <h4>{order.currency1.name + '/' + order.currency2.name}</h4>
+                      <p>{order.date}</p>
+                    </div>
+                    <div>
+                      <p>Количество контрактов: {order.value}</p>
+                      <p>Цена: {order.price}</p>
+                    </div>
+                  </div>
+                </div>
+                {i !== concreteOrders.length - 1 ? (
+                  <hr style={{ width: '100%', height: 2, left: 30 }}></hr>
+                ) : (
+                  ''
+                )}
+              </Link>
+            ))}
+          </div>
         </>
       ) : (
-        <></>
-      )}
-      {!isChoosed ? (
-        parsedOrders.map((order, i) => {
+        allOrders.map((order, i) => {
           let isShown = false;
           return (
-            <div key={orders.orders[i].id} className="orders__block">
+            <div key={i} className="orders__block">
               <div className="orders__container">
                 <div className="orders__text">
                   <img
@@ -102,20 +154,26 @@ const Main = (props) => {
                       e.target.style.transform = isShown ? 'rotate(180deg)' : 'rotate(0)';
                     }}
                   />
-                  <h3 className="orders__title">{order.Stock}</h3>
+                  <h3 className="orders__title">{order.stockId}</h3>
                 </div>
-                <img src={StockNames[order.Stock]} alt="" className="orders__img" />
+                <img
+                  src={process.env.REACT_APP_API_URL + order.orderTypeId}
+                  alt={order.stockId}
+                  className="orders__img"
+                />
               </div>
               <div className="orders__stats">
                 <div>
-                  <p className="orders__stat">Сделок: {getCountOfOrders(order.Stock)}</p>
-                  <p className="orders__stat">Количество контрактов: {order.Value}</p>
-                  <p className="orders__stat">Средняя цена: {order.Summary}</p>
+                  <p className="orders__stat">Сделок:{getCountOfOrders(order.stockId)}</p>
+                  <p className="orders__stat">Количество контрактов: {order.value}</p>
+                  <p className="orders__stat">
+                    Средняя цена: {order.summary / getCountOfOrders(order.stockId)}
+                  </p>
                   <p
                     href="/TradersDiary/main"
                     onClick={(e) => {
                       e.preventDefault();
-                      getOrdersByName(order.Stock);
+                      getOrdersByName(order.stockId);
                     }}
                     className="orders__btn">
                     Посмотреть все сделки
@@ -125,7 +183,7 @@ const Main = (props) => {
                   href="/TradersDiary/main"
                   onClick={(e) => {
                     e.preventDefault();
-                    getOrdersByName(order.Stock);
+                    getOrdersByName(order.stockId);
                   }}>
                   <FontAwesomeIcon
                     icon={faChevronRight}
@@ -145,48 +203,9 @@ const Main = (props) => {
             </div>
           );
         })
-      ) : (
-        <div className="orders__concretes">
-          {concreteOrders.map((order, i) => (
-            <Link
-              to={'/order/' + order.id}
-              key={order.id}
-              style={{ width: '100%' }}
-              className="orders__concretes_container">
-              <div className="orders__concrete">
-                <FontAwesomeIcon
-                  icon={faArrowLeft}
-                  color={OrderTypes[order.Type][1]}
-                  fixedWidth
-                  style={{
-                    width: 20,
-                    height: 20,
-                    transform: 'rotate(' + OrderTypes[order.Type][0] + 'deg)',
-                    marginRight: 15,
-                  }}
-                />
-                <div className="orders__txt">
-                  <div className="orders__txt_top">
-                    <h4>{order.Currency1 + '/' + order.Currency2}</h4>
-                    <p>{order.Date}</p>
-                  </div>
-                  <div>
-                    <p>Количество контрактов: {order.Value}</p>
-                    <p>Цена: {order.Price}</p>
-                  </div>
-                </div>
-              </div>
-              {i !== concreteOrders.length - 1 ? (
-                <hr style={{ width: '100%', height: 2, left: 30 }}></hr>
-              ) : (
-                ''
-              )}
-            </Link>
-          ))}
-        </div>
       )}
     </div>
   );
-};
+});
 
 export default Main;
