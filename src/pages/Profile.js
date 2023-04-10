@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom';
 import React, { useContext, useEffect } from 'react';
 import { Context } from '..';
+import { logOut } from '../http/userApi';
+import { useNavigate } from 'react-router-dom';
+import { MAIN_ROUTE } from '../utils/consts';
 
 const Profile = (props) => {
   const { user } = useContext(Context);
+  const navigate = useNavigate();
 
   useEffect(() => {
     props.setAppBarTitle('Личный кабинет');
@@ -22,9 +26,21 @@ const Profile = (props) => {
           );
         })}
       </div>
-      <Link to={'/profile/:' + user.user.login + '/edit'} className="profile__btn">
-        Изменить
-      </Link>
+      <div className="profile__btns">
+        <Link to={'/profile/:' + user.user.login + '/edit'} className="profile__btn">
+          Изменить
+        </Link>
+        <p
+          className="profile__btn_red"
+          onClick={() => {
+            logOut();
+            user.setIsAuth(false);
+            user.setUser({});
+            navigate(MAIN_ROUTE);
+          }}>
+          Выйти
+        </p>
+      </div>
     </div>
   );
 };

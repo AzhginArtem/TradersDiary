@@ -11,7 +11,7 @@ body
 .main
   height: calc(100vh - 45px - 60px)
   padding: 30px
-  padding-bottom: 0
+  overflow: auto
   @media (min-width: 1400px)
     height: calc(100vh - 100px - 100px)
 
@@ -86,7 +86,7 @@ body
     margin: 0 auto
     display: block
     text-align: center
-    margin-bottom: 8px
+    margin-bottom: 15px
     text-decoration: none
     width: 40%
     &:hover
@@ -102,6 +102,7 @@ body
   display: flex
   flex-direction: column
   row-gap: 15px
+  align-items: flex-end
   @media (min-width: 1400px)
     max-width: 600px
     margin: 0 auto
@@ -250,9 +251,6 @@ body
     font-size: 32px
     line-height: 32px
     color: #FFFFFF
-    position: absolute
-    right: 15px
-    bottom: 70px
     border-radius: 5px
     text-decoration: none
 
@@ -408,6 +406,11 @@ body
     font-size: 16px
     line-height: 22px
     color: #FFFFFF
+  &__btns
+    display: flex
+    width: 600px
+    margin: 0 auto
+    justify-content: space-between
   &__btn
     width: 150px
     height: 30px
@@ -416,7 +419,6 @@ body
     align-items: center
     justify-content: center
     border-radius: 5px
-    margin: 0 auto
     font-family: 'Nunito'
     font-style: normal
     font-weight: 600
@@ -424,6 +426,23 @@ body
     line-height: 22px
     color: #FFFFFF
     text-decoration: none
+    &_red
+      width: 150px
+      height: 30px
+      background: #FF1414
+      display: flex
+      align-items: center
+      justify-content: center
+      border-radius: 5px
+      font-family: 'Nunito'
+      font-style: normal
+      font-weight: 600
+      font-size: 16px
+      line-height: 22px
+      color: #FFFFFF
+      text-decoration: none
+      &:hover
+        cursor: pointer
 
 .order
   width: 100%

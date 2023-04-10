@@ -11,7 +11,7 @@ const OrderTypes = {
   Пополнение: [180, '#DDAC00'],
   Покупка: [-90, '#FF1414'],
   Продажа: [90, '#039900'],
-  'Вывод средств': [90, '#039900'],
+  'Вывод средств': [0, '#009900'],
 };
 
 const Main = observer((props) => {
@@ -75,9 +75,6 @@ const Main = observer((props) => {
   }
   return (
     <div className="orders">
-      <Link to="/neworder" className="orders__adder">
-        +
-      </Link>
       {isChoosed ? (
         <>
           <FontAwesomeIcon
@@ -204,6 +201,9 @@ const Main = observer((props) => {
           );
         })
       )}
+      <Link to="/neworder" className="orders__adder">
+        +
+      </Link>
     </div>
   );
 });

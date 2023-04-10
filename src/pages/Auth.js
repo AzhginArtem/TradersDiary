@@ -19,6 +19,7 @@ const Auth = observer((props) => {
 
   useEffect(() => {
     props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
+    if (user.isAuth) navigate(ORDERS_ROUTE);
   });
 
   const handleAuth = async (e) => {
@@ -173,6 +174,14 @@ const Auth = observer((props) => {
           <p style={{ color: 'red' }}>{valideErrors.password}</p>
         </div>
       </form>
+      <Link
+        className="auth__switch"
+        onClick={() => {
+          setIsLogin(!isLogin);
+          props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
+        }}>
+        {!isLogin ? 'Войти!' : 'Зарегистрироваться!'}
+      </Link>
       <button
         onClick={(e) => {
           handleAuth(e);
@@ -180,14 +189,6 @@ const Auth = observer((props) => {
         className="auth__btn">
         {isLogin ? 'Войти!' : 'Зарегистрироваться!'}
       </button>
-      <Link
-        className="auth__switch"
-        onClick={() => {
-          setIsLogin(!isLogin);
-          props.setAppBarTitle(isLogin ? 'Войти' : 'Регистрация');
-        }}>
-        Уже есть аккаунт!
-      </Link>
       <div className="auth__socials">
         <p>Тут будет стоять регистрация через соц. сети.</p>
       </div>

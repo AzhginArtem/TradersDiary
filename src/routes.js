@@ -36,16 +36,12 @@ export const AuthRoutes = [
     Component: Profile,
   },
   {
-    path: PROFILE_ROUTE + '/:id' + '/edit',
+    path: PROFILE_ROUTE + '/:id/edit',
     Component: ProfileChange,
   },
 ];
 
 export const PublicRoutes = [
-  {
-    path: MAIN_ROUTE,
-    Component: Auth,
-  },
   {
     path: MAIN_ROUTE,
     Component: Auth,

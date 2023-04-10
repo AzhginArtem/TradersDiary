@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '..';
 import { useNavigate } from 'react-router-dom';
-import { accounts } from '../store/ArtificialAccounts';
 import { Link } from 'react-router-dom';
 import { change } from '../http/userApi';
 

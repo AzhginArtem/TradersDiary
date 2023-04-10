@@ -41,7 +41,7 @@ const Deposit = (props) => {
   useEffect(() => {
     props.setAppBarTitle('Депозит');
     getOrders();
-  });
+  }, []);
 
   return (
     <div className="deposit">

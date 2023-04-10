@@ -26,6 +26,10 @@ export const check = async () => {
   return jwt_decode(data.token);
 };
 
+export const logOut = async () => {
+  localStorage.removeItem('token');
+};
+
 export const change = async (fio, login, password, email, phone, userid) => {
   const { data } = await $host.post('/api/user/change', {
     fio,
@@ -47,6 +51,11 @@ export const mainOrders = async (id) => {
 
 export const getStocks = async () => {
   const { data } = await $authHost.get('/api/order/stocks');
+  return data;
+};
+
+export const getCurrencies = async () => {
+  const { data } = await $authHost.get('/api/order/currencies');
   return data;
 };
 

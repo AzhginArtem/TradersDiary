@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 const $host = axios.create({
-  baseURL: 'http://localhost:5000/',
+  baseURL: 'https://api.tdiary-online.ru',
 });
 
 const $authHost = axios.create({
-  baseURL: 'http://localhost:5000/',
+  baseURL: 'https://api.tdiary-online.ru',
 });
 
 const authInterceptor = (config) => {

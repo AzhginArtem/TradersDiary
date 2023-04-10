@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Context } from '..';
-import { createOrder, getStocks } from '../http/userApi';
+import { createOrder, getStocks, getCurrencies } from '../http/userApi';
 import { useNavigate } from 'react-router-dom';
 import { ORDERS_ROUTE } from '../utils/consts';
 
@@ -17,7 +17,7 @@ const NewOrder = (props) => {
         ? '0' + (date.getMonth() + 1)
         : date.getMonth() + 1) +
       '-' +
-      date.getDate(),
+      (date.getDate().toString().length === 1 ? '0' + date.getDate() : date.getDate()),
   );
   const [stockInput, setStockInput] = useState('');
   const [firstCurrencyInput, setFirstCurrencyInput] = useState('');
@@ -26,7 +26,8 @@ const NewOrder = (props) => {
   const [priceInput, setPriceInput] = useState('');
   const [summaryInput, setSummaryInput] = useState('');
   const [stocks, setStocks] = useState([]);
-  const [typeInput, setTypeInput] = useState('');
+  const [currencies, setCurrencies] = useState([]);
+  const [typeInput, setTypeInput] = useState('Пополнение');
   const displayWidth = window.innerWidth < 1400 ? 20 : 50;
   const navigate = useNavigate();
 
@@ -50,8 +51,9 @@ const NewOrder = (props) => {
     setSummaryInput(valueInput * priceInput);
   };
 
-  const getStocksValue = async () => {
+  const getSearchValues = async () => {
     setStocks(await getStocks());
+    setCurrencies(await getCurrencies());
   };
 
   const hideAllSearches = () => {
@@ -62,11 +64,9 @@ const NewOrder = (props) => {
 
   useEffect(() => {
     props.setAppBarTitle('Добавление сделки');
-    getStocksValue();
+    getSearchValues();
     getSummary();
   }, [priceInput, valueInput]);
-
-  const CurrenciesForInput = ['BTC', 'USDT', 'ETH', 'XMR'];
 
   return (
     <div className="new">
@@ -169,18 +169,22 @@ const NewOrder = (props) => {
             }}
           />
           <ul className="new__search" id="Currency1SearchBlock">
-            {CurrenciesForInput.map((currency) => (
-              <li
-                key={currency}
-                onClick={(e) => {
-                  setFirstCurrencyInput(e.target.innerHTML);
-                  document
-                    .getElementById('Currency1SearchBlock')
-                    .classList.remove('new__search_show');
-                }}>
-                {currency}
-              </li>
-            ))}
+            {currencies.map((currency) =>
+              currency.name.toLowerCase().includes(firstCurrencyInput.toLowerCase()) ? (
+                <li
+                  key={currency.id}
+                  onClick={(e) => {
+                    setFirstCurrencyInput(e.target.innerHTML);
+                    document
+                      .getElementById('Currency1SearchBlock')
+                      .classList.remove('new__search_show');
+                  }}>
+                  {currency.name}
+                </li>
+              ) : (
+                <li key={currency.id}></li>
+              ),
+            )}
           </ul>
         </div>
         <div className="new__block">
@@ -199,18 +203,22 @@ const NewOrder = (props) => {
             }}
           />
           <ul className="new__search" id="Currency2SearchBlock">
-            {CurrenciesForInput.map((currency) => (
-              <li
-                key={currency}
-                onClick={(e) => {
-                  setSecondCurrencyInput(e.target.innerHTML);
-                  document
-                    .getElementById('Currency2SearchBlock')
-                    .classList.remove('new__search_show');
-                }}>
-                {currency}
-              </li>
-            ))}
+            {currencies.map((currency) =>
+              currency.name.toLowerCase().includes(secondCurrencyInput.toLowerCase()) ? (
+                <li
+                  key={currency.id}
+                  onClick={(e) => {
+                    setSecondCurrencyInput(e.target.innerHTML);
+                    document
+                      .getElementById('Currency2SearchBlock')
+                      .classList.remove('new__search_show');
+                  }}>
+                  {currency.name}
+                </li>
+              ) : (
+                <li key={currency.id}></li>
+              ),
+            )}
           </ul>
         </div>
         <div className="new__block">
